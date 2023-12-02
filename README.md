@@ -1,4 +1,4 @@
-<h1>🌟 Solidity Intermediate Module 1 </h1>
+<h1>🌟 Solidity AVAX+ETH Intermediate Module 1 </h1>
 <p>contains require(), assert() and revert() functions requested as per module 1 assessment by
   <a href = "https://www.metacrafters.io/"> Metacrafters </a></p>
 
