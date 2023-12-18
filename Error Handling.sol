@@ -1,20 +1,32 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-contract checkingError {
-    function testRequire(uint _num) public pure {
-        require(_num > 10 && _num < 500, "Input must be greater than 10 and less than 500");
+contract SendMoney {
+    address[] public funders;
+    mapping(address => uint) public amountFunded;
+    address public immutable owner;
+
+    constructor() {
+        owner = msg.sender;
     }
 
-    function testRevert(uint _num) public pure {
-        if (_num <= 10) {
-            revert("Input must be greater than 10");
+    function sendEth() public payable {
+        require(msg.value > 5*10**18, "amount should be atleast 5 ETH");
+        funders.push(msg.sender);
+        amountFunded[msg.sender]=msg.value;
+        assert(amountFunded[msg.sender] == msg.value);
+    }
+
+    function withdrawToOwner() public {
+        require(msg.sender == owner, "Only owner can use this function");
+        for (uint i = 0; i < funders.length; i++) {
+            address funderAddress = funders[i];
+            amountFunded[funderAddress] = 0;
         }
-    }
-
-    uint public num;
-
-    function testAssert() public view {
-        assert(num == 0);
+        funders = new address[](0);
+        (bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
+        if (!success) {
+            revert("Transaction Failed!");
+        }
     }
 }
